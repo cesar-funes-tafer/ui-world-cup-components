@@ -1,19 +1,23 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ui-web-components dev</title>
-    <style>
-      body {
-        margin: 0;
-        padding: 2rem;
-        font-family: sans-serif;
-      }
-    </style>
-  </head>
-  <body>
-    <user-profile name="Ana"></user-profile>
-    <script type="module" src="/src/index.js"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ui-web-components dev</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+
+<body style=" background: black;">
+  <div style="height: 300px; max-width: 600px;">
+    <football-game></football-game>
+  </div>
+  <script type="module" src="/src/registry.js"></script>
+</body>
+
 </html>

@@ -1,0 +1,44 @@
+{
+  "en": {
+    "goal_text": "GOOOL!",
+    "miss_text": "SAVED!",
+    "shots_label": "Shots Left",
+    "goals_label": "Goals",
+    "shoot_cta": "Take Your Shot",
+    "aim_hint": "Click left/center/right in the goal or use arrow keys",
+    "won_promo_label": "Your promo code",
+    "copy_promo_cta": "Copy code",
+    "copied_promo_cta": "Copied",
+    "no_promo_code_text": "No promo code available",
+    "final_score_label": "Final Score",
+    "play_again_cta": "Play Again",
+    "promo_cookie_name": "football_game_promocode",
+    "result_promo_codes": {
+      "0": "FUTBOL10",
+      "1": "FUTBOL15",
+      "2": "FUTBOL20",
+      "3": "FUTBOL30"
+    }
+  },
+  "es": {
+    "goal_text": "GOOOL!",
+    "miss_text": "ATAJADA!",
+    "shots_label": "Tiros",
+    "goals_label": "Goles",
+    "shoot_cta": "Toma tu tiro",
+    "aim_hint": "Haz clic en izquierda/centro/derecha del arco o usa las flechas",
+    "won_promo_label": "Tu codigo promocional",
+    "copy_promo_cta": "Copiar codigo",
+    "copied_promo_cta": "Copiado",
+    "no_promo_code_text": "Sin codigo promocional",
+    "final_score_label": "Marcador final",
+    "play_again_cta": "Jugar otra vez",
+    "promo_cookie_name": "football_game_promocode",
+    "result_promo_codes": {
+      "0": "FUTBOL10",
+      "1": "FUTBOL15",
+      "2": "FUTBOL20",
+      "3": "FUTBOL30"
+    }
+  }
+}
