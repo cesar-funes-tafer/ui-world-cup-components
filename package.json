@@ -1,12 +1,17 @@
 {
   "name": "ui-web-components",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "preview": "vite preview",
-    "build": "vite build"
+    "preview": "vite --host --port 4173 --strictPort",
+    "build": "npm run build:game",
+    "build:all": "vite build",
+    "build:game": "BUILD_TARGET=football-game vite build",
+    "build:registry": "BUILD_TARGET=registry vite build",
+    "release:patch": "npm version patch --no-git-tag-version && npm run build",
+    "release:minor": "npm version minor --no-git-tag-version && npm run build"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.12",
