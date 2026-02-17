@@ -1,6 +1,6 @@
 {
   "name": "ui-web-components",
-  "version": "1.1.0",
+  "version": "1.5.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -18,5 +18,8 @@
     "tailwindcss": "^4.1.12",
     "vite": "^7.1.0",
     "vue": "^3.5.0"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
   }
 }

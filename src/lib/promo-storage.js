@@ -1,6 +1,8 @@
 const DEFAULT_MAX_AGE = 60 * 60 * 24 * 30;
 
-export function resolvePromoCodeFromQuery(search = window.location.search) {
+export function resolvePromoCodeFromQuery(
+  search = typeof window !== "undefined" ? window.location.search : "",
+) {
   const params = new URLSearchParams(search);
   const promoCode = params.get("promocode") || params.get("promo_code");
 
@@ -19,10 +21,12 @@ export function getGoalsCookieName(cookieName) {
 }
 
 export function writeCookie(cookieName, cookieValue, maxAge = DEFAULT_MAX_AGE) {
+  if (typeof document === "undefined") return;
   document.cookie = `${encodeURIComponent(cookieName)}=${encodeURIComponent(cookieValue)}; path=/; max-age=${maxAge}; SameSite=Lax`;
 }
 
 export function readCookie(cookieName) {
+  if (typeof document === "undefined") return null;
   const encodedName = `${encodeURIComponent(cookieName)}=`;
   const allCookies = document.cookie ? document.cookie.split("; ") : [];
 

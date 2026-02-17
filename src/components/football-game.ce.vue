@@ -1,5 +1,5 @@
 <template>
-  <section class="w-full text-white">
+  <section class="game-ui-font w-full text-white">
     <div class="relative flex w-full flex-col items-center justify-center">
       <div
         class="relative aspect-[16/10] md:aspect-[16/9] w-full overflow-hidden border border-white/20 bg-slate-900/45 shadow-[0_20px_70px_rgba(0,0,0,0.55)] backdrop-blur-sm"
@@ -70,73 +70,34 @@
           </p>
         </div>
 
-        <div
-          class="absolute inset-x-[10%] top-[10%] z-[1] h-[50%] rounded-t-lg border-[6px] border-white shadow-[0_0_0_1px_rgba(255,255,255,0.5),0_16px_40px_rgba(0,0,0,0.55)]"
-        >
-          <div class="absolute inset-0 opacity-30">
-            <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern
-                  id="goal-net"
-                  width="20"
-                  height="20"
-                  patternUnits="userSpaceOnUse"
-                >
-                  <path
-                    d="M 20 0 L 0 20 M 10 -10 L -10 10 M 30 10 L 10 30"
-                    stroke="white"
-                    stroke-width="1"
-                    fill="none"
-                  />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#goal-net)" />
-            </svg>
-          </div>
-          <div
-            class="absolute -left-1 top-0 h-full w-2 rounded-l bg-white/20"
-          ></div>
-          <div
-            class="absolute -right-1 top-0 h-full w-2 rounded-r bg-white/20"
-          ></div>
-          <div
-            class="absolute -top-1 left-0 h-2 w-full rounded-t bg-white/20"
-          ></div>
+        <div class="absolute inset-x-[8%] top-[10%] z-[1] h-[50%] md:inset-x-[9%] md:top-[11%] md:h-[52%]">
+          <img
+            :src="goalAsset"
+            alt=""
+            aria-hidden="true"
+            class="h-full w-full object-fill opacity-95 drop-shadow-[0_10px_35px_rgba(0,0,0,0.45)]"
+            draggable="false"
+          />
         </div>
 
         <div
-          class="absolute top-[35%] z-10 flex h-20 w-16 items-center justify-center transition-all duration-300 ease-out"
+          class="absolute top-[35%] z-10 flex h-24 w-20 items-center justify-center transition-all duration-300 ease-out md:h-28 md:w-24"
           :style="keeperStyle"
         >
-          <div class="relative">
-            <div class="relative h-14 w-10 rounded-t-full bg-sky-500">
-              <div
-                class="absolute -top-4 left-2 h-6 w-6 rounded-full bg-amber-200"
-              ></div>
-              <div
-                class="absolute -left-4 top-2 h-10 w-4 origin-top-right rounded-full bg-sky-500"
-                :class="{ '-rotate-45': keeperPosition }"
-              ></div>
-              <div
-                class="absolute -right-4 top-2 h-10 w-4 origin-top-left rounded-full bg-sky-500"
-                :class="{ 'rotate-45': keeperPosition }"
-              ></div>
-              <div
-                class="absolute -left-5 top-0 h-3 w-3 rounded-full bg-white"
-              ></div>
-              <div
-                class="absolute -right-5 top-0 h-3 w-3 rounded-full bg-white"
-              ></div>
-            </div>
-          </div>
+          <img
+            :src="keeperSpriteAsset"
+            alt="Goalkeeper"
+            :class="keeperSpriteClass"
+            draggable="false"
+          />
         </div>
 
         <div
-          class="absolute z-20 size-18 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-out md:size-20"
+          class="absolute z-20 size-12 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-out md:size-14"
           :style="ballStyle"
         >
           <img
-            :src="sportBall"
+            :src="ballAsset"
             alt="Soccer ball"
             class="size-full object-contain drop-shadow-lg"
             draggable="false"
@@ -190,33 +151,46 @@
         </p>
       </div>
 
-      <div class="mt-8 text-center">
-        <template v-if="!hasPlayedBefore">
-          <div class="mb-6 flex items-center justify-center gap-8">
-            <div class="text-white/80">
-              <span class="text-sm uppercase tracking-wider">{{
-                text.shots_label
-              }}</span>
-              <div class="text-3xl font-bold text-white">
-                {{ shotsRemaining }}
-              </div>
-            </div>
-            <div class="h-12 w-px bg-white/20"></div>
-            <div class="text-white/80">
-              <span class="text-sm uppercase tracking-wider">{{
-                text.goals_label
-              }}</span>
-              <div class="text-3xl font-bold text-sky-300">{{ goals }}</div>
+      <div class="mt-6 w-full max-w-5xl px-3 md:mt-8">
+        <div class="grid grid-cols-[1fr_44px_44px_1fr] items-center gap-[3px] md:grid-cols-[1fr_62px_62px_1fr] md:gap-1">
+          <div class="relative flex h-[70px] items-center justify-center overflow-hidden rounded-[999px_8px_8px_999px] bg-[linear-gradient(180deg,#59606a_0%,#444b55_38%,#323842_72%,#262c35_100%)] shadow-[0_8px_18px_rgba(0,0,0,0.32)] md:h-[82px]">
+            <div class="pointer-events-none absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.06)_34%,rgba(255,255,255,0)_100%)]"></div>
+            <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_100%)]"></div>
+            <div class="relative -translate-y-[3px] text-center md:-translate-y-1">
+              <p class="m-0 text-xs leading-none font-bold uppercase tracking-[0.16em] text-[#dadce0] md:text-base md:tracking-[0.2em]">{{ text.shots_label }}</p>
             </div>
           </div>
 
+          <div class="relative flex h-[78px] items-center justify-center overflow-hidden rounded-[8px] bg-[linear-gradient(180deg,#59606a_0%,#444b55_38%,#323842_72%,#262c35_100%)] shadow-[0_8px_18px_rgba(0,0,0,0.32)] md:h-[96px]">
+            <div class="pointer-events-none absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.06)_34%,rgba(255,255,255,0)_100%)]"></div>
+            <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_100%)]"></div>
+            <p class="relative z-10 m-0 text-[44px] leading-[0.92] font-black text-[#f6f7f9] md:text-[58px]">{{ shotsRemaining }}</p>
+          </div>
+          <div class="relative flex h-[78px] items-center justify-center overflow-hidden rounded-[8px] bg-[linear-gradient(180deg,#59606a_0%,#444b55_38%,#323842_72%,#262c35_100%)] shadow-[0_8px_18px_rgba(0,0,0,0.32)] md:h-[96px]">
+            <div class="pointer-events-none absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.06)_34%,rgba(255,255,255,0)_100%)]"></div>
+            <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_100%)]"></div>
+            <p class="relative z-10 m-0 text-[44px] leading-[0.92] font-black text-[#74cbff] md:text-[58px]">{{ goals }}</p>
+          </div>
+
+          <div class="relative flex h-[70px] items-center justify-center overflow-hidden rounded-[8px_999px_999px_8px] bg-[linear-gradient(180deg,#59606a_0%,#444b55_38%,#323842_72%,#262c35_100%)] shadow-[0_8px_18px_rgba(0,0,0,0.32)] md:h-[82px]">
+            <div class="pointer-events-none absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.06)_34%,rgba(255,255,255,0)_100%)]"></div>
+            <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_100%)]"></div>
+            <div class="relative -translate-y-[3px] text-center md:-translate-y-1">
+              <p class="m-0 text-xs leading-none font-bold uppercase tracking-[0.16em] text-[#dadce0] md:text-base md:tracking-[0.2em]">{{ text.goals_label }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 text-center md:mt-6">
+        <template v-if="!hasPlayedBefore">
           <div
             v-if="shotsRemaining > 0"
-            class="relative mx-auto flex min-h-12 w-full max-w-md items-center justify-center"
+            class="relative mx-auto flex min-h-14 w-full max-w-md items-center justify-center"
           >
             <button
               type="button"
-              class="absolute bg-white px-8 py-3 font-semibold text-slate-900 shadow-lg transition hover:bg-white/90"
+              class="absolute inline-flex min-w-56 items-center justify-center whitespace-nowrap rounded-sm border border-sky-200/40 bg-sky-100 px-8 py-3 text-xl font-black uppercase tracking-[0.08em] text-slate-900 shadow-[0_12px_24px_rgba(0,0,0,0.35)] transition hover:-translate-y-0.5 hover:bg-white md:min-w-64"
               :class="
                 gameState === 'ready'
                   ? 'visible opacity-100'
@@ -228,7 +202,7 @@
             </button>
 
             <p
-              class="absolute text-sm text-white/75 transition"
+              class="absolute text-sm uppercase tracking-[0.08em] text-white/75 transition"
               :class="
                 gameState === 'aiming'
                   ? 'visible opacity-100'
@@ -263,7 +237,11 @@
 
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import sportBall from "@/assets/sportball-optimized.png";
+import ballAsset from "@/assets/football-game/ball.svg";
+import goalAsset from "@/assets/football-game/goal.svg";
+import keeperDiveLeftAsset from "@/assets/football-game/keeper-dive-left.svg";
+import keeperAsset from "@/assets/football-game/keeper.svg";
+import keeperDiveRightAsset from "@/assets/football-game/keeper-dive-right.svg";
 import localCopy from "@/content/football-game.copy.json";
 import { usePenaltyGame } from "@/composables/use-penalty-game";
 import {
@@ -400,6 +378,33 @@ const {
 
 const promoCodeLabel = computed(() => {
   return awardedPromoCode.value || text.value.no_promo_code_text;
+});
+
+const keeperSpriteAsset = computed(() => {
+  if (keeperPosition.value === "left") {
+    return keeperDiveLeftAsset;
+  }
+
+  if (keeperPosition.value === "right") {
+    return keeperDiveRightAsset;
+  }
+
+  return keeperAsset;
+});
+
+const keeperSpriteClass = computed(() => {
+  const baseClass =
+    "object-contain drop-shadow-[0_6px_16px_rgba(0,0,0,0.45)]";
+
+  if (keeperPosition.value === "left") {
+    return `h-full w-auto ${baseClass}`;
+  }
+
+  if (keeperPosition.value === "right") {
+    return `h-full w-auto ${baseClass}`;
+  }
+
+  return `h-full w-full ${baseClass}`;
 });
 
 function startGame() {
@@ -577,6 +582,11 @@ onUnmounted(() => {
 
 .result-overlay {
   animation: result-slide-up 280ms ease-out;
+}
+
+:host,
+.game-ui-font {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
 @keyframes result-slide-up {
