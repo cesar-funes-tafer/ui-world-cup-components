@@ -14,7 +14,6 @@ Repositorio para construir y publicar el Web Component `football-game` como bund
 - `src/elements/football-game.js`: registro de tag (`customElements.define`)
 - `src/registry.js`: entry global
 - `src/composables/use-penalty-game.js`: logica de gameplay
-- `src/composables/use-localized-copy.js`: i18n + copy override
 - `src/lib/promo-storage.js`: utilidades de promo/cookies
 - `src/content/football-game.copy.json`: textos por locale
 
@@ -23,7 +22,6 @@ Repositorio para construir y publicar el Web Component `football-game` como bund
 - `npm run dev`: desarrollo local
 - `npm run preview`: preview en `http://localhost:4173`
 - `npm run build`: genera un solo JS standalone de `football-game` (plug-and-play)
-- `npm run build:all`: genera `football-game` + `registry`
 - `npm run build:game`: genera bundle standalone de `football-game`
 - `npm run build:registry`: genera bundle del registro global
 - `npm run release:patch`: sube version patch y genera bundles versionados
@@ -32,7 +30,7 @@ Repositorio para construir y publicar el Web Component `football-game` como bund
 ## Outputs
 
 - `dist/ui-football-game@<version>.js`
-- `dist/ui-registry@<version>.js` (solo con `build:all` o `build:registry`)
+- `dist/ui-registry@<version>.js` (solo con `build:registry`)
 
 `npm run build` deja un solo archivo de salida principal para integracion directa.
 
@@ -42,7 +40,7 @@ Repositorio para construir y publicar el Web Component `football-game` como bund
 
 ```html
 <script src="https://cdn.example.com/ui-football-game@1.0.0.js"></script>
-<football-game lang="es" promo-cookie-name="promo_code_name"></football-game>
+<football-game lang="es"></football-game>
 ```
 
 ### Opcion B: registro global
@@ -59,9 +57,10 @@ Repositorio para construir y publicar el Web Component `football-game` como bund
 - `lang="en|es"`
 - `locale="en|es"` (fallback)
 - `copy='{"es": {...}}'` (override opcional)
-- `promo-cookie-name="mi_cookie"`
+- `promo-mode="none|cookie"` (default: `none`)
+- `promo-cookie-name="mi_cookie"` (solo con `promo-mode="cookie"`)
 
-Si no envias `promo-cookie-name`, el componente funciona sin cookies (modo adorno/rejugable).
+Para modo adorno/rejugable usa `promo-mode="none"` (o no lo envies).
 
 ### Custom events
 

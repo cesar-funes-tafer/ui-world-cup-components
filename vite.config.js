@@ -9,23 +9,13 @@ const packageJson = JSON.parse(
 )
 const buildVersion = packageJson.version
 
-const allEntries = {
-  registry: 'src/registry.js',
-  'football-game': 'src/elements/football-game.js'
-}
-
 const buildTarget = process.env.BUILD_TARGET
-if (buildTarget && !allEntries[buildTarget]) {
-  throw new Error(
-    `Invalid BUILD_TARGET "${buildTarget}". Use one of: ${Object.keys(allEntries).join(', ')}`
-  )
+if (buildTarget && buildTarget !== 'football-game' && buildTarget !== 'registry') {
+  throw new Error('Invalid BUILD_TARGET. Use "football-game" or "registry".')
 }
-
-const selectedEntries = buildTarget
-  ? { [buildTarget]: allEntries[buildTarget] }
-  : allEntries
-
-const isSingleEntryBuild = Object.keys(selectedEntries).length === 1
+const buildEntry =
+  buildTarget === 'registry' ? 'src/registry.js' : 'src/elements/football-game.js'
+const buildEntryName = buildTarget === 'registry' ? 'registry' : 'football-game'
 
 export default defineConfig({
   plugins: [vue(), tailwindcss()],
@@ -40,17 +30,15 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: selectedEntries,
+      entry: buildEntry,
       name: 'uiWebComponents',
       formats: ['es'],
-      fileName: (_, entryName) => `ui-${entryName}@${buildVersion}.js`
+      fileName: () => `ui-${buildEntryName}@${buildVersion}.js`
     },
-    rollupOptions: isSingleEntryBuild
-      ? {
-          output: {
-            inlineDynamicImports: true
-          }
-        }
-      : undefined
+    rollupOptions: {
+      output: {
+        inlineDynamicImports: true
+      }
+    }
   }
 })

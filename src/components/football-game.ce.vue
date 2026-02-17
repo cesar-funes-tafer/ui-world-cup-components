@@ -5,7 +5,7 @@
         class="relative aspect-[16/10] md:aspect-[16/9] w-full overflow-hidden border border-white/20 bg-slate-900/45 shadow-[0_20px_70px_rgba(0,0,0,0.55)] backdrop-blur-sm"
       >
         <div
-          v-if="hasPlayedBefore"
+          v-if="isPromoModeEnabled && hasPlayedBefore"
           class="result-overlay absolute inset-x-3 bottom-3 z-40 border border-white/35 bg-slate-950/70 p-3 text-center shadow-[0_10px_30px_rgba(0,0,0,0.45)] backdrop-blur-sm md:inset-x-4 md:bottom-4 md:p-4"
         >
           <div
@@ -265,7 +265,6 @@
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import sportBall from "@/assets/sportball-optimized.png";
 import localCopy from "@/content/football-game.copy.json";
-import { useLocalizedCopy } from "@/composables/use-localized-copy";
 import { usePenaltyGame } from "@/composables/use-penalty-game";
 import {
   getGoalsCookieName,
@@ -288,6 +287,10 @@ const props = defineProps({
     type: [Object, String],
     default: null,
   },
+  promoMode: {
+    type: String,
+    default: "none",
+  },
   promoCookieName: {
     type: String,
     default: "",
@@ -305,7 +308,70 @@ const hasPlayedBefore = ref(false);
 const awardedPromoCode = ref("");
 const promoCodeCopied = ref(false);
 
-const { text } = useLocalizedCopy(props, localCopy);
+const normalizedPromoMode = computed(() => {
+  return props.promoMode === "cookie" ? "cookie" : "none";
+});
+
+const isPromoModeEnabled = computed(() => normalizedPromoMode.value === "cookie");
+
+const cookieName = computed(() => {
+  if (!isPromoModeEnabled.value) return null;
+
+  const normalizedName = (props.promoCookieName || "").trim();
+  if (normalizedName) return normalizedName;
+
+  const defaultCookieName =
+    typeof text.value.promo_cookie_name === "string"
+      ? text.value.promo_cookie_name.trim()
+      : "";
+
+  return defaultCookieName || null;
+});
+
+function parseCopyOverride(copy) {
+  if (!copy) return {};
+
+  if (typeof copy === "string") {
+    try {
+      return JSON.parse(copy);
+    } catch {
+      return {};
+    }
+  }
+
+  if (typeof copy === "object" && !Array.isArray(copy)) {
+    return copy;
+  }
+
+  return {};
+}
+
+const normalizedLocale = computed(() => {
+  const safeLocale = (props.lang || props.locale || "en").toLowerCase();
+  return localCopy[safeLocale] ? safeLocale : "en";
+});
+
+const parsedCopyOverride = computed(() => parseCopyOverride(props.copy));
+
+const text = computed(() => {
+  const base = localCopy[normalizedLocale.value] || localCopy.en;
+  const overrideSource = parsedCopyOverride.value;
+  const localeOverride =
+    overrideSource[normalizedLocale.value] || overrideSource;
+
+  if (
+    !localeOverride ||
+    typeof localeOverride !== "object" ||
+    Array.isArray(localeOverride)
+  ) {
+    return base;
+  }
+
+  return {
+    ...base,
+    ...localeOverride,
+  };
+});
 
 const {
   gameState,
@@ -336,13 +402,6 @@ const promoCodeLabel = computed(() => {
   return awardedPromoCode.value || text.value.no_promo_code_text;
 });
 
-const cookieName = computed(() => {
-  const normalizedName = (props.promoCookieName || "").trim();
-  return normalizedName || null;
-});
-
-const isCookieModeEnabled = computed(() => Boolean(cookieName.value));
-
 function startGame() {
   if (hasPlayedBefore.value) return;
   if (gameState.value !== "ready") return;
@@ -367,6 +426,8 @@ function storePromoCodeCookie(promoCode) {
 }
 
 function resolveResultPromoCode(goalCount) {
+  if (!isPromoModeEnabled.value) return null;
+
   const configuredPromoCodes = text.value.result_promo_codes;
 
   if (
@@ -386,7 +447,7 @@ function resolveResultPromoCode(goalCount) {
 }
 
 function storeInitialPromoCodeCookie() {
-  if (!isCookieModeEnabled.value) return;
+  if (!isPromoModeEnabled.value) return;
 
   const promoCode = resolvePromoCodeFromQuery();
   if (!promoCode) return;
@@ -394,7 +455,7 @@ function storeInitialPromoCodeCookie() {
 }
 
 function storeResultPromoCodeCookie(goalCount) {
-  if (!isCookieModeEnabled.value) return;
+  if (!isPromoModeEnabled.value) return;
 
   const cookieName = resolveCookieName();
   if (!cookieName) return;
@@ -410,8 +471,10 @@ function storeResultPromoCodeCookie(goalCount) {
 }
 
 function finishGame(goalCount) {
-  awardedPromoCode.value = resolveResultPromoCode(goalCount) || "";
-  hasPlayedBefore.value = isCookieModeEnabled.value;
+  awardedPromoCode.value = isPromoModeEnabled.value
+    ? resolveResultPromoCode(goalCount) || ""
+    : "";
+  hasPlayedBefore.value = isPromoModeEnabled.value;
   promoCodeCopied.value = false;
   storeResultPromoCodeCookie(goalCount);
   emit("game-finish", {
@@ -456,7 +519,7 @@ async function copyPromoCode() {
 }
 
 function hydratePlayedState() {
-  if (!isCookieModeEnabled.value) return;
+  if (!isPromoModeEnabled.value) return;
 
   const cookieName = resolveCookieName();
   const playedCookieName = getPlayedCookieName(cookieName);
