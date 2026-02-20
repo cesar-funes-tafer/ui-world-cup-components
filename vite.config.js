@@ -17,28 +17,34 @@ const buildEntry =
   buildTarget === 'registry' ? 'src/registry.js' : 'src/elements/football-game.js'
 const buildEntryName = buildTarget === 'registry' ? 'registry' : 'football-game'
 
-export default defineConfig({
-  plugins: [vue(), tailwindcss()],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-      vue: 'vue/dist/vue.esm-browser.prod.js'
-    }
-  },
-  define: {
-    'process.env.NODE_ENV': JSON.stringify('production')
-  },
-  build: {
-    lib: {
-      entry: buildEntry,
-      name: 'uiWebComponents',
-      formats: ['es'],
-      fileName: () => `ui-${buildEntryName}@${buildVersion}.js`
-    },
-    rollupOptions: {
-      output: {
-        inlineDynamicImports: true
+export default defineConfig(({ command }) => {
+  const isBuild = command === 'build'
+
+  return {
+    plugins: [vue(), tailwindcss()],
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+        ...(isBuild && { vue: 'vue/dist/vue.esm-browser.prod.js' })
       }
-    }
+    },
+    ...(isBuild && {
+      define: {
+        'process.env.NODE_ENV': JSON.stringify('production')
+      },
+      build: {
+        lib: {
+          entry: buildEntry,
+          name: 'uiWebComponents',
+          formats: ['es'],
+          fileName: () => `ui-${buildEntryName}@${buildVersion}.js`
+        },
+        rollupOptions: {
+          output: {
+            inlineDynamicImports: true
+          }
+        }
+      }
+    })
   }
 })
