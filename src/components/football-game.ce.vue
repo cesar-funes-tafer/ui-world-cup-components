@@ -2,181 +2,165 @@
   <section class="game-ui-font w-full text-white">
     <div class="relative flex w-full flex-col items-center justify-center">
       <div
-        class="relative aspect-[16/10] md:aspect-[16/9] w-full overflow-hidden border border-white/20 bg-slate-900/45 shadow-[0_20px_70px_rgba(0,0,0,0.55)] backdrop-blur-sm"
+        class="relative aspect-[16/8.2] md:aspect-[16/7.4] w-full border border-white/20 bg-slate-900/45 shadow-[0_20px_70px_rgba(0,0,0,0.55)] backdrop-blur-sm"
+        :class="isPromoResultVisible
+            ? 'z-50 overflow-visible md:z-auto md:overflow-hidden'
+            : 'overflow-hidden'
+          "
       >
         <div
-          v-if="isPromoModeEnabled && hasPlayedBefore"
-          class="result-overlay absolute inset-x-3 bottom-3 z-40 border border-white/35 bg-slate-950/70 p-3 text-center shadow-[0_10px_30px_rgba(0,0,0,0.45)] backdrop-blur-sm md:inset-x-4 md:bottom-4 md:p-4"
+          v-if="isPromoResultVisible"
+          class="result-overlay absolute inset-x-0 top-0 bottom-[-5.75rem] z-40 bg-slate-950/28 p-2 backdrop-blur-sm md:inset-0 md:p-3"
         >
           <div
-            class="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent"
-          ></div>
-
-          <div
-            class="mx-auto flex w-full max-w-sm items-center justify-center gap-2 border border-white/20 bg-white/5 px-3 py-1.5"
+            class="grid h-full w-full place-items-start overflow-y-auto border border-white/35 bg-[linear-gradient(155deg,rgba(255,255,255,0.96)_0%,rgba(241,245,249,0.93)_100%)] px-4 py-4 text-center text-slate-900 shadow-[0_20px_50px_rgba(2,6,23,0.35)] md:place-items-center md:px-8 md:py-6"
           >
-            <span
-              class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70"
-              >{{ text.final_score_label }}</span
-            >
-            <span
-              class="text-lg font-extrabold leading-none text-sky-300 tabular-nums md:text-xl"
-              >{{ goals }}<span class="text-white/60">/3</span></span
-            >
+            <div class="w-full max-w-3xl">
+              <div class="mx-auto max-w-xl border border-slate-300/80 bg-white/70 px-4 py-5 shadow-[0_10px_30px_rgba(15,23,42,0.08)] md:px-6">
+                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                  {{
+                    text.promocode_label ||
+                    text.promo_code_label ||
+                    "Promocode"
+                  }}
+                </p>
+                <p
+                  class="mt-2 break-all text-xl font-medium tracking-[0.18em] text-slate-900 md:text-3xl md:tracking-[0.22em]">
+                  {{ awardedPromoCode || promoCodeLabel }}
+                </p>
+              </div>
+
+              <button
+                v-if="awardedPromoCode"
+                type="button"
+                class="mx-auto mt-4 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border px-5 py-2 text-sm font-semibold shadow-[0_10px_26px_rgba(10,26,44,0.22)] transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:mt-8"
+                :class="promoCodeCopied
+                    ? 'border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-500 focus-visible:ring-emerald-500'
+                    : 'border-slate-900 bg-slate-900 text-white hover:bg-slate-800 focus-visible:ring-slate-900'
+                  "
+                :aria-label="`${text.copy_promo_cta}: ${awardedPromoCode}`"
+                @click="copyPromoCode"
+              >
+                <svg v-if="!promoCodeCopied" viewBox="0 0 24 24" class="h-4 w-4" aria-hidden="true">
+                  <path fill="currentColor"
+                    d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m0 16h-9V7h9z" />
+                </svg>
+                <svg v-else viewBox="0 0 24 24" class="h-4 w-4" aria-hidden="true">
+                  <path fill="currentColor" d="M9 16.2l-3.5-3.6L4 14.1l5 4.9L20 8l-1.5-1.5z" />
+                </svg>
+                {{
+                  promoCodeCopied ? text.copied_promo_cta : text.copy_promo_cta
+                }}
+              </button>
+
+              <p class="sr-only" aria-live="polite">
+                {{ promoCodeCopied ? text.copied_promo_cta : "" }}
+              </p>
+            </div>
           </div>
-
-          <p class="mt-2 text-sm text-white/90 md:text-base">
-            {{ text.won_promo_label }}:
-            <span
-              class="ml-1 inline-flex min-h-7 items-center border border-sky-200/30 bg-sky-300/10 px-2 py-0.5 font-bold tracking-[0.08em] text-sky-100"
-              >{{ promoCodeLabel }}</span
-            >
-          </p>
-
-          <button
-            v-if="awardedPromoCode"
-            type="button"
-            class="mx-auto mt-3 inline-flex min-h-11 items-center gap-2 border border-white/20 bg-white px-4 py-1.5 text-sm font-semibold text-slate-950 shadow-[0_8px_20px_rgba(255,255,255,0.2)] transition hover:-translate-y-0.5 hover:bg-sky-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 md:px-5 md:py-2"
-            :aria-label="`${text.copy_promo_cta}: ${awardedPromoCode}`"
-            @click="copyPromoCode"
-          >
-            <svg
-              v-if="!promoCodeCopied"
-              viewBox="0 0 24 24"
-              class="h-4 w-4 md:h-5 md:w-5"
-              aria-hidden="true"
-            >
-              <path
-                fill="currentColor"
-                d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m0 16h-9V7h9z"
-              />
-            </svg>
-            <svg
-              v-else
-              viewBox="0 0 24 24"
-              class="h-4 w-4 md:h-5 md:w-5"
-              aria-hidden="true"
-            >
-              <path
-                fill="currentColor"
-                d="M9 16.2l-3.5-3.6L4 14.1l5 4.9L20 8l-1.5-1.5z"
-              />
-            </svg>
-            {{ promoCodeCopied ? text.copied_promo_cta : text.copy_promo_cta }}
-          </button>
-
-          <p class="sr-only" aria-live="polite">
-            {{ promoCodeCopied ? text.copied_promo_cta : "" }}
-          </p>
         </div>
 
-        <div class="absolute inset-x-[8%] top-[10%] z-[1] h-[50%] md:inset-x-[9%] md:top-[11%] md:h-[52%]">
-          <img
-            :src="goalAsset"
-            alt=""
-            aria-hidden="true"
-            class="h-full w-full object-fill opacity-95 drop-shadow-[0_10px_35px_rgba(0,0,0,0.45)]"
-            draggable="false"
-          />
+        <div class="absolute inset-x-[8%] top-[11%] z-[1] h-[44%] md:inset-x-[9%] md:top-[12%] md:h-[46%]">
+          <img :src="goalAsset" alt="" aria-hidden="true"
+            class="h-full w-full object-fill opacity-95 drop-shadow-[0_10px_35px_rgba(0,0,0,0.45)]" draggable="false" />
         </div>
 
         <div
-          class="absolute top-[35%] z-10 flex h-24 w-20 items-center justify-center transition-all duration-300 ease-out md:h-28 md:w-24"
-          :style="keeperStyle"
-        >
-          <img
-            :src="keeperSpriteAsset"
-            alt="Goalkeeper"
-            :class="keeperSpriteClass"
-            draggable="false"
-          />
+          class="absolute top-[33%] z-10 flex h-24 w-20 items-center justify-center transition-all duration-300 ease-out md:top-[34%] md:h-28 md:w-24"
+          :style="keeperStyle">
+          <img :src="keeperSpriteAsset" alt="Goalkeeper" :class="keeperSpriteClass" draggable="false" />
         </div>
 
         <div
           class="absolute z-20 size-12 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-out md:size-14"
-          :style="ballStyle"
-        >
-          <img
-            :src="ballAsset"
-            alt="Soccer ball"
-            class="size-full object-contain drop-shadow-lg"
-            draggable="false"
-          />
+          :style="ballStyle">
+          <img :src="ballAsset" alt="Soccer ball" class="size-full object-contain drop-shadow-lg" draggable="false" />
         </div>
 
-        <div
-          class="absolute bottom-0 left-0 right-0 h-[35%]"
-          style="background: linear-gradient(to top, #15803d 0%, #16a34a 100%)"
-        >
-          <div
-            class="absolute left-[15%] right-[15%] top-[20%] h-px bg-white/40"
-          ></div>
+        <div class="absolute bottom-0 left-0 right-0 h-[35%]"
+          style="background: linear-gradient(to top, #15803d 0%, #16a34a 100%)">
+          <div class="absolute left-[15%] right-[15%] top-[20%] h-px bg-white/40"></div>
         </div>
 
-        <div
-          v-if="gameState === 'aiming'"
-          class="absolute inset-x-[10%] top-[10%] z-20 flex h-[50%]"
-        >
-          <button
-            v-for="pos in positions"
-            :key="pos"
-            type="button"
+        <div v-if="gameState === 'aiming'" class="absolute inset-x-[10%] top-[11%] z-20 flex h-[44%] md:top-[12%] md:h-[46%]">
+          <button v-for="pos in positions" :key="pos" type="button"
             class="group flex flex-1 cursor-crosshair items-center justify-center border-r border-white/20 transition-colors hover:bg-white/10 last:border-r-0"
-            @click="shoot(pos)"
-          >
+            @click="shoot(pos)">
             <span
-              class="h-8 w-8 rounded-full border-2 border-white/30 transition-all group-hover:scale-110 group-hover:border-white/60 group-hover:bg-white/10"
-            ></span>
+              class="h-8 w-8 rounded-full border-2 border-white/30 transition-all group-hover:scale-110 group-hover:border-white/60 group-hover:bg-white/10"></span>
           </button>
         </div>
       </div>
 
-      <div
-        v-if="showGoal"
-        class="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
-      >
-        <p
-          class="animate-pulse text-5xl font-bold tracking-wider text-sky-200 drop-shadow-2xl md:text-8xl"
-        >
+      <div v-if="showGoal" class="pointer-events-none absolute inset-0 z-30 flex items-center justify-center">
+        <p class="animate-pulse text-5xl font-bold tracking-wider text-sky-200 drop-shadow-2xl md:text-8xl">
           {{ text.goal_text }}
         </p>
       </div>
 
-      <div
-        v-if="showMiss"
-        class="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
-      >
+      <div v-if="showMiss" class="pointer-events-none absolute inset-0 z-30 flex items-center justify-center">
         <p class="text-4xl font-bold text-white/90 drop-shadow-xl md:text-6xl">
           {{ text.miss_text }}
         </p>
       </div>
 
-      <div class="mt-6 w-full max-w-5xl px-3 md:mt-8">
-        <div class="grid grid-cols-[1fr_44px_44px_1fr] items-center gap-[3px] md:grid-cols-[1fr_62px_62px_1fr] md:gap-1">
-          <div class="relative flex h-[70px] items-center justify-center overflow-hidden rounded-[999px_8px_8px_999px] bg-[linear-gradient(180deg,#59606a_0%,#444b55_38%,#323842_72%,#262c35_100%)] shadow-[0_8px_18px_rgba(0,0,0,0.32)] md:h-[82px]">
-            <div class="pointer-events-none absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.06)_34%,rgba(255,255,255,0)_100%)]"></div>
-            <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_100%)]"></div>
+      <div class="mt-4 w-full max-w-5xl md:mt-5">
+        <div
+          class="grid grid-cols-[1fr_44px_44px_1fr] items-center gap-[3px] md:grid-cols-[1fr_62px_62px_1fr] md:gap-1">
+          <div
+            class="relative flex h-[60px] items-center justify-center overflow-hidden bg-[linear-gradient(180deg,#59606a_0%,#444b55_38%,#323842_72%,#262c35_100%)] shadow-[0_8px_18px_rgba(0,0,0,0.32)] md:h-[70px]">
+            <div
+              class="pointer-events-none absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.06)_34%,rgba(255,255,255,0)_100%)]">
+            </div>
+            <div
+              class="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_100%)]">
+            </div>
             <div class="relative -translate-y-[3px] text-center md:-translate-y-1">
-              <p class="m-0 text-xs leading-none font-bold uppercase tracking-[0.16em] text-[#dadce0] md:text-base md:tracking-[0.2em]">{{ text.shots_label }}</p>
+              <p
+                class="m-0 text-xs leading-none font-bold uppercase tracking-[0.16em] text-[#dadce0] md:text-base md:tracking-[0.2em]">
+                {{ text.shots_label }}
+              </p>
             </div>
           </div>
 
-          <div class="relative flex h-[78px] items-center justify-center overflow-hidden rounded-[8px] bg-[linear-gradient(180deg,#59606a_0%,#444b55_38%,#323842_72%,#262c35_100%)] shadow-[0_8px_18px_rgba(0,0,0,0.32)] md:h-[96px]">
-            <div class="pointer-events-none absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.06)_34%,rgba(255,255,255,0)_100%)]"></div>
-            <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_100%)]"></div>
-            <p class="relative z-10 m-0 text-[44px] leading-[0.92] font-black text-[#f6f7f9] md:text-[58px]">{{ shotsRemaining }}</p>
+            <div
+              class="relative flex h-[60px] items-center justify-center overflow-hidden bg-[linear-gradient(180deg,#59606a_0%,#444b55_38%,#323842_72%,#262c35_100%)] shadow-[0_8px_18px_rgba(0,0,0,0.32)] md:h-[72px]">
+            <div
+              class="pointer-events-none absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.06)_34%,rgba(255,255,255,0)_100%)]">
+            </div>
+            <div
+              class="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_100%)]">
+            </div>
+            <p class="relative z-10 m-0 text-[38px] leading-[0.92] font-black text-[#f6f7f9] md:text-[50px]">
+              {{ shotsRemaining }}
+            </p>
           </div>
-          <div class="relative flex h-[78px] items-center justify-center overflow-hidden rounded-[8px] bg-[linear-gradient(180deg,#59606a_0%,#444b55_38%,#323842_72%,#262c35_100%)] shadow-[0_8px_18px_rgba(0,0,0,0.32)] md:h-[96px]">
-            <div class="pointer-events-none absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.06)_34%,rgba(255,255,255,0)_100%)]"></div>
-            <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_100%)]"></div>
-            <p class="relative z-10 m-0 text-[44px] leading-[0.92] font-black text-[#74cbff] md:text-[58px]">{{ goals }}</p>
+          <div
+            class="relative flex h-[60px] items-center justify-center overflow-hidden bg-[linear-gradient(180deg,#59606a_0%,#444b55_38%,#323842_72%,#262c35_100%)] shadow-[0_8px_18px_rgba(0,0,0,0.32)] md:h-[72px]">
+            <div
+              class="pointer-events-none absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.06)_34%,rgba(255,255,255,0)_100%)]">
+            </div>
+            <div
+              class="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_100%)]">
+            </div>
+            <p class="relative z-10 m-0 text-[38px] leading-[0.92] font-black text-[#74cbff] md:text-[50px]">
+              {{ goals }}
+            </p>
           </div>
 
-          <div class="relative flex h-[70px] items-center justify-center overflow-hidden rounded-[8px_999px_999px_8px] bg-[linear-gradient(180deg,#59606a_0%,#444b55_38%,#323842_72%,#262c35_100%)] shadow-[0_8px_18px_rgba(0,0,0,0.32)] md:h-[82px]">
-            <div class="pointer-events-none absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.06)_34%,rgba(255,255,255,0)_100%)]"></div>
-            <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_100%)]"></div>
+          <div
+            class="relative flex h-[60px] items-center justify-center overflow-hidden bg-[linear-gradient(180deg,#59606a_0%,#444b55_38%,#323842_72%,#262c35_100%)] shadow-[0_8px_18px_rgba(0,0,0,0.32)] md:h-[70px]">
+            <div
+              class="pointer-events-none absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.06)_34%,rgba(255,255,255,0)_100%)]">
+            </div>
+            <div
+              class="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_100%)]">
+            </div>
             <div class="relative -translate-y-[3px] text-center md:-translate-y-1">
-              <p class="m-0 text-xs leading-none font-bold uppercase tracking-[0.16em] text-[#dadce0] md:text-base md:tracking-[0.2em]">{{ text.goals_label }}</p>
+              <p
+                class="m-0 text-xs leading-none font-bold uppercase tracking-[0.16em] text-[#dadce0] md:text-base md:tracking-[0.2em]">
+                {{ text.goals_label }}
+              </p>
             </div>
           </div>
         </div>
@@ -184,48 +168,33 @@
 
       <div class="mt-5 text-center md:mt-6">
         <template v-if="!hasPlayedBefore">
-          <div
-            v-if="shotsRemaining > 0"
-            class="relative mx-auto flex min-h-14 w-full max-w-md items-center justify-center"
-          >
-            <button
-              type="button"
-              class="absolute inline-flex min-w-56 items-center justify-center whitespace-nowrap rounded-sm border border-sky-200/40 bg-sky-100 px-8 py-3 text-xl font-black uppercase tracking-[0.08em] text-slate-900 shadow-[0_12px_24px_rgba(0,0,0,0.35)] transition hover:-translate-y-0.5 hover:bg-white md:min-w-64"
-              :class="
-                gameState === 'ready'
+          <div v-if="shotsRemaining > 0"
+            class="relative mx-auto flex min-h-12 w-full max-w-md items-center justify-center">
+            <button type="button"
+              class="absolute inline-flex min-w-52 items-center justify-center whitespace-nowrap rounded-sm border border-sky-200/40 bg-sky-100 px-7 py-2 text-lg font-black uppercase tracking-[0.08em] text-slate-900 shadow-[0_12px_24px_rgba(0,0,0,0.35)] transition hover:-translate-y-0.5 hover:bg-white md:min-w-60 md:text-[1.15rem]"
+              :class="gameState === 'ready'
                   ? 'visible opacity-100'
                   : 'invisible pointer-events-none opacity-0'
-              "
-              @click="startGame"
-            >
+                " @click="startGame">
               {{ text.shoot_cta }}
             </button>
 
-            <p
-              class="absolute text-sm uppercase tracking-[0.08em] text-white/75 transition"
-              :class="
-                gameState === 'aiming'
-                  ? 'visible opacity-100'
-                  : 'invisible pointer-events-none opacity-0'
-              "
-            >
+            <p class="absolute text-sm uppercase tracking-[0.08em] text-white/75 transition" :class="gameState === 'aiming'
+                ? 'visible opacity-100'
+                : 'invisible pointer-events-none opacity-0'
+              ">
               {{ text.aim_hint }}
             </p>
           </div>
 
-          <div
-            v-if="gameState === 'ready' && shotsRemaining === 0"
-            class="space-y-3"
-          >
+          <div v-if="gameState === 'ready' && shotsRemaining === 0" class="space-y-3">
             <p class="text-sm text-white/80">
               {{ text.final_score_label }}:
               <span class="font-bold text-sky-300">{{ goals }}/3</span>
             </p>
-            <button
-              type="button"
+            <button type="button"
               class="bg-white px-8 py-3 font-semibold text-slate-900 shadow-lg transition hover:bg-white/90"
-              @click="restartGame"
-            >
+              @click="restartGame">
               {{ text.play_again_cta || "Play Again" }}
             </button>
           </div>
@@ -244,6 +213,10 @@ import keeperAsset from "@/assets/football-game/keeper.svg";
 import keeperDiveRightAsset from "@/assets/football-game/keeper-dive-right.svg";
 import localCopy from "@/content/football-game.copy.json";
 import { usePenaltyGame } from "@/composables/use-penalty-game";
+import {
+  parsePromoCodesInput,
+  resolvePromoCodeForGoals,
+} from "@/lib/promo-codes";
 import {
   getGoalsCookieName,
   getPlayedCookieName,
@@ -273,6 +246,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  promoCodes: {
+    type: [Object, String],
+    default: null,
+  },
 });
 
 const emit = defineEmits([
@@ -290,7 +267,18 @@ const normalizedPromoMode = computed(() => {
   return props.promoMode === "cookie" ? "cookie" : "none";
 });
 
-const isPromoModeEnabled = computed(() => normalizedPromoMode.value === "cookie");
+const isPromoModeEnabled = computed(
+  () => normalizedPromoMode.value === "cookie",
+);
+
+const isPromoResultVisible = computed(() => {
+  return (
+    isPromoModeEnabled.value &&
+    hasPlayedBefore.value &&
+    !showGoal.value &&
+    !showMiss.value
+  );
+});
 
 const cookieName = computed(() => {
   if (!isPromoModeEnabled.value) return null;
@@ -330,6 +318,7 @@ const normalizedLocale = computed(() => {
 });
 
 const parsedCopyOverride = computed(() => parseCopyOverride(props.copy));
+const parsedPromoCodes = computed(() => parsePromoCodesInput(props.promoCodes));
 
 const text = computed(() => {
   const base = localCopy[normalizedLocale.value] || localCopy.en;
@@ -393,8 +382,7 @@ const keeperSpriteAsset = computed(() => {
 });
 
 const keeperSpriteClass = computed(() => {
-  const baseClass =
-    "object-contain drop-shadow-[0_6px_16px_rgba(0,0,0,0.45)]";
+  const baseClass = "object-contain drop-shadow-[0_6px_16px_rgba(0,0,0,0.45)]";
 
   if (keeperPosition.value === "left") {
     return `h-full w-auto ${baseClass}`;
@@ -433,22 +421,11 @@ function storePromoCodeCookie(promoCode) {
 function resolveResultPromoCode(goalCount) {
   if (!isPromoModeEnabled.value) return null;
 
-  const configuredPromoCodes = text.value.result_promo_codes;
-
-  if (
-    !configuredPromoCodes ||
-    typeof configuredPromoCodes !== "object" ||
-    Array.isArray(configuredPromoCodes)
-  ) {
-    return null;
-  }
-
-  const promoCode =
-    configuredPromoCodes[String(goalCount)] ?? configuredPromoCodes.default;
-
-  if (typeof promoCode !== "string") return null;
-  const normalizedPromoCode = promoCode.trim();
-  return normalizedPromoCode || null;
+  return resolvePromoCodeForGoals(
+    goalCount,
+    parsedPromoCodes.value,
+    text.value.result_promo_codes,
+  );
 }
 
 function storeInitialPromoCodeCookie() {
@@ -586,7 +563,13 @@ onUnmounted(() => {
 
 :host,
 .game-ui-font {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
 }
 
 @keyframes result-slide-up {

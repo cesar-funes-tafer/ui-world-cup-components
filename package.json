@@ -1,6 +1,6 @@
 {
   "name": "ui-web-components",
-  "version": "1.5.0",
+  "version": "1.5.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,6 +9,8 @@
     "build": "npm run build:game",
     "build:game": "BUILD_TARGET=football-game vite build",
     "build:registry": "BUILD_TARGET=registry vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "release:patch": "npm version patch --no-git-tag-version && npm run build",
     "release:minor": "npm version minor --no-git-tag-version && npm run build"
   },
@@ -17,6 +19,7 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "tailwindcss": "^4.1.12",
     "vite": "^7.1.0",
+    "vitest": "^3.2.4",
     "vue": "^3.5.0"
   },
   "dependencies": {

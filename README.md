@@ -80,11 +80,13 @@ Mapeo sugerido desde `newassets/`:
 - `copy='{"es": {...}}'` (override opcional de textos)
 - `promo-mode="none|cookie"` (default: `none`)
 - `promo-cookie-name="mi_cookie"` (solo con `promo-mode="cookie"`)
+- `promo-codes='{"0":"LOSS10","1":"GOAL15","2":"GOAL20","3":"GOAL30","default":"PLAY5"}'` (opcional)
 
 Notas:
 
 - Para modo adorno/rejugable usa `promo-mode="none"` (o no lo envies)
 - En `promo-mode="cookie"`, el juego se bloquea despues de jugar y persiste resultado por cookie
+- `promo-codes` define los promocodes por cantidad de goles y tiene prioridad sobre `copy.result_promo_codes`
 
 ### Custom events
 

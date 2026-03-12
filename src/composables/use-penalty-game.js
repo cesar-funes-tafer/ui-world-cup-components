@@ -76,8 +76,10 @@ export function usePenaltyGame(options = {}) {
     const randomKeeper = positions[Math.floor(Math.random() * positions.length)];
     keeperPosition.value = randomKeeper;
 
-    const targetX = position === "left" ? 25 : position === "right" ? 75 : 50;
-    ballPosition.value = { x: targetX, y: 25 };
+    const isSideShot = position === "left" || position === "right";
+    const targetX = position === "left" ? 29 : position === "right" ? 71 : 50;
+    const targetY = isSideShot ? 31 : 25;
+    ballPosition.value = { x: targetX, y: targetY };
 
     queueTimeout(() => {
       const isGoal = position !== randomKeeper;
